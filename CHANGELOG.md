@@ -28,4 +28,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved type annotations and formatting consistency.
 - Added linting and formatting configuration via Ruff.
 
-[0.1.0]: https://github.com/yourusername/portctl/releases/tag/v0.1.0
+[0.1.0]: https://github.com/0xBroom/portctl/releases/tag/v0.1.0

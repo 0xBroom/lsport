@@ -37,9 +37,9 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/portctl"
-Repository = "https://github.com/yourusername/portctl"
-Issues = "https://github.com/yourusername/portctl/issues"
+Homepage = "https://github.com/0xBroom/portctl"
+Repository = "https://github.com/0xBroom/portctl"
+Issues = "https://github.com/0xBroom/portctl/issues"
 
 [project.scripts]
 portctl = "portctl:app"
