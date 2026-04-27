@@ -36,7 +36,7 @@ Clone the repository and run the installer:
 ```bash
 git clone https://github.com/0xBroom/portctl.git
 cd portctl
-./install.sh
+bash install.sh
 ```
 
 The installer will:
