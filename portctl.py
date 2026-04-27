@@ -7,17 +7,18 @@ __version__ = "0.1.0"
 
 import os
 import signal
+from typing import Optional
+
 import psutil
 import typer
-from rich.console import Console
-from rich.table import Table
-from rich.prompt import Prompt, Confirm
-from rich.panel import Panel
-from rich.text import Text
 from rich import box
-from typing import Optional, List
+from rich.console import Console
+from rich.panel import Panel
+from rich.prompt import Confirm, Prompt
+from rich.table import Table
+from rich.text import Text
 
-VALID_STATES = ('LISTEN', 'ESTABLISHED', 'CLOSE_WAIT')
+VALID_STATES = ("LISTEN", "ESTABLISHED", "CLOSE_WAIT")
 
 app = typer.Typer(
     help=(
@@ -40,14 +41,14 @@ app = typer.Typer(
 console = Console()
 
 
-def get_open_ports(filter_port: Optional[int] = None, filter_state: Optional[str] = None) -> List[dict]:
+def get_open_ports(filter_port: Optional[int] = None, filter_state: Optional[str] = None) -> list[dict]:
     ports = []
     seen = set()
     state_filter = filter_state.upper() if filter_state else None
 
-    for proc in psutil.process_iter(['pid', 'name', 'username']):
+    for proc in psutil.process_iter(["pid", "name", "username"]):
         try:
-            conns = proc.net_connections(kind='inet')
+            conns = proc.net_connections(kind="inet")
             for conn in conns:
                 if not conn.laddr or conn.status not in VALID_STATES:
                     continue
@@ -60,27 +61,29 @@ def get_open_ports(filter_port: Optional[int] = None, filter_state: Optional[str
                 if filter_port and port != filter_port:
                     continue
                 seen.add(key)
-                ports.append({
-                    'port': port,
-                    'pid': proc.pid,
-                    'name': proc.info['name'] or '?',
-                    'user': proc.info['username'] or '?',
-                    'status': conn.status,
-                    'proto': 'TCP',
-                    'addr': str(conn.laddr.ip),
-                })
+                ports.append(
+                    {
+                        "port": port,
+                        "pid": proc.pid,
+                        "name": proc.info["name"] or "?",
+                        "user": proc.info["username"] or "?",
+                        "status": conn.status,
+                        "proto": "TCP",
+                        "addr": str(conn.laddr.ip),
+                    }
+                )
         except (psutil.NoSuchProcess, psutil.AccessDenied):
             continue
 
-    ports.sort(key=lambda x: x['port'])
+    ports.sort(key=lambda x: x["port"])
     return ports
 
 
 def status_color(status: str) -> str:
-    return {'LISTEN': 'green', 'ESTABLISHED': 'cyan', 'CLOSE_WAIT': 'yellow'}.get(status, 'white')
+    return {"LISTEN": "green", "ESTABLISHED": "cyan", "CLOSE_WAIT": "yellow"}.get(status, "white")
 
 
-def build_table(ports: List[dict], selected: Optional[set] = None) -> Table:
+def build_table(ports: list[dict], selected: Optional[set] = None) -> Table:
     table = Table(
         box=box.ROUNDED,
         border_style="bright_black",
@@ -88,28 +91,28 @@ def build_table(ports: List[dict], selected: Optional[set] = None) -> Table:
         show_lines=False,
         pad_edge=True,
     )
-    table.add_column("#",        style="bright_black", width=4,  justify="right")
-    table.add_column("Port",     style="bold yellow",  width=8,  justify="right")
-    table.add_column("Proto",    style="blue",         width=6)
-    table.add_column("Address",  style="bright_black", width=16)
-    table.add_column("State",                          width=13)
-    table.add_column("PID",      style="magenta",      width=7,  justify="right")
-    table.add_column("Process",  style="white",        width=20)
-    table.add_column("User",     style="bright_black", width=12)
+    table.add_column("#", style="bright_black", width=4, justify="right")
+    table.add_column("Port", style="bold yellow", width=8, justify="right")
+    table.add_column("Proto", style="blue", width=6)
+    table.add_column("Address", style="bright_black", width=16)
+    table.add_column("State", width=13)
+    table.add_column("PID", style="magenta", width=7, justify="right")
+    table.add_column("Process", style="white", width=20)
+    table.add_column("User", style="bright_black", width=12)
 
     for i, p in enumerate(ports, 1):
-        color = status_color(p['status'])
-        sel_mark = "✓ " if selected and p['port'] in selected else "  "
-        row_style = "on #1c1c1c" if selected and p['port'] in selected else ""
+        color = status_color(p["status"])
+        sel_mark = "✓ " if selected and p["port"] in selected else "  "
+        row_style = "on #1c1c1c" if selected and p["port"] in selected else ""
         table.add_row(
             f"{sel_mark}{i}",
-            str(p['port']),
-            p['proto'],
-            p['addr'],
-            Text(p['status'], style=f"bold {color}"),
-            str(p['pid']),
-            p['name'][:20],
-            p['user'][:12],
+            str(p["port"]),
+            p["proto"],
+            p["addr"],
+            Text(p["status"], style=f"bold {color}"),
+            str(p["pid"]),
+            p["name"][:20],
+            p["user"][:12],
             style=row_style,
         )
     return table
@@ -117,9 +120,9 @@ def build_table(ports: List[dict], selected: Optional[set] = None) -> Table:
 
 def kill_port(port: int, force: bool = False) -> bool:
     killed = []
-    for proc in psutil.process_iter(['pid', 'name']):
+    for proc in psutil.process_iter(["pid", "name"]):
         try:
-            for conn in proc.net_connections(kind='inet'):
+            for conn in proc.net_connections(kind="inet"):
                 if conn.laddr and conn.laddr.port == port:
                     os.kill(proc.pid, signal.SIGKILL if force else signal.SIGTERM)
                     killed.append(proc.pid)
@@ -130,6 +133,7 @@ def kill_port(port: int, force: bool = False) -> bool:
 
 
 # ─── Commands ───────────────────────────────────────────────────────────────
+
 
 @app.command(
     "list",
@@ -146,7 +150,9 @@ def kill_port(port: int, force: bool = False) -> bool:
 )
 def cmd_list(
     state: Optional[str] = typer.Option(
-        None, "--state", "-s",
+        None,
+        "--state",
+        "-s",
         help="Filter by state: listen | established | close_wait",
         metavar="STATE",
     ),
@@ -189,9 +195,9 @@ def cmd_list(
     ),
 )
 def cmd_kill(
-    port:  int  = typer.Argument(..., help="Port number to close"),
+    port: int = typer.Argument(..., help="Port number to close"),
     force: bool = typer.Option(False, "--force", "-f", help="Use SIGKILL instead of SIGTERM"),
-    yes:   bool = typer.Option(False, "--yes",   "-y", help="Don't ask for confirmation"),
+    yes: bool = typer.Option(False, "--yes", "-y", help="Don't ask for confirmation"),
 ):
     ports = get_open_ports(filter_port=port)
     if not ports:
@@ -202,10 +208,9 @@ def cmd_kill(
     console.print(build_table(ports))
     console.print()
 
-    if not yes:
-        if not Confirm.ask(f"  [bold red]Close process(es) on port {port}?[/]", default=False):
-            console.print("[bright_black]  Cancelled.[/]")
-            return
+    if not yes and not Confirm.ask(f"  [bold red]Close process(es) on port {port}?[/]", default=False):
+        console.print("[bright_black]  Cancelled.[/]")
+        return
 
     sig_label = "[red]SIGKILL[/]" if force else "[yellow]SIGTERM[/]"
     console.print(f"  Sending {sig_label} to port [bold]{port}[/]...", end=" ")
@@ -232,7 +237,7 @@ def cmd_kill(
 )
 def cmd_interactive():
     while True:
-        listen_ports = get_open_ports(filter_state='LISTEN')
+        listen_ports = get_open_ports(filter_state="LISTEN")
 
         if not listen_ports:
             console.print(Panel("[yellow]No ports in LISTEN state[/]", border_style="yellow"))
@@ -240,11 +245,13 @@ def cmd_interactive():
 
         console.clear()
         console.print()
-        console.print(Panel(
-            "[bold white]🔌 portctl[/] [bright_black]—[/] [cyan]interactive mode[/]",
-            border_style="bright_black",
-            expand=False,
-        ))
+        console.print(
+            Panel(
+                "[bold white]🔌 portctl[/] [bright_black]—[/] [cyan]interactive mode[/]",
+                border_style="bright_black",
+                expand=False,
+            )
+        )
         console.print(build_table(listen_ports))
         console.print()
         console.print("[bright_black]  Select by row or port · multiple with commas · [white]q[/] to quit[/]")
@@ -252,12 +259,12 @@ def cmd_interactive():
 
         choice = Prompt.ask("  [bold cyan]>[/]").strip()
 
-        if choice.lower() in ('q', 'quit', 'exit'):
+        if choice.lower() in ("q", "quit", "exit"):
             console.print("[bright_black]  Goodbye.[/]")
             break
 
         targets = []
-        for part in choice.split(','):
+        for part in choice.split(","):
             part = part.strip()
             if not part.isdigit():
                 console.print(f"[red]  Invalid input:[/] {part!r}")
@@ -266,7 +273,7 @@ def cmd_interactive():
             if 1 <= num <= len(listen_ports):
                 targets.append(listen_ports[num - 1])
             else:
-                matches = [p for p in listen_ports if p['port'] == num]
+                matches = [p for p in listen_ports if p["port"] == num]
                 targets.extend(matches) if matches else console.print(f"[red]  Not found:[/] {num}")
 
         if not targets:
@@ -280,7 +287,7 @@ def cmd_interactive():
         force = Confirm.ask("  Use SIGKILL (force close)?", default=False)
         if Confirm.ask(f"  [bold red]Close {len(targets)} process(es)?[/]", default=False):
             for t in targets:
-                icon = "[green]✓[/]" if kill_port(t['port'], force=force) else "[red]✗[/]"
+                icon = "[green]✓[/]" if kill_port(t["port"], force=force) else "[red]✗[/]"
                 console.print(f"  {icon} Port [bold]{t['port']}[/]")
         else:
             console.print("[bright_black]  Cancelled.[/]")
