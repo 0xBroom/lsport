@@ -34,7 +34,7 @@ A fast and elegant macOS command-line utility for inspecting and managing TCP po
 Clone the repository and run the installer:
 
 ```bash
-git clone https://github.com/yourusername/portctl.git
+git clone https://github.com/0xBroom/portctl.git
 cd portctl
 ./install.sh
 ```
