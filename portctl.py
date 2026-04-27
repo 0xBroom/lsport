@@ -1,6 +1,6 @@
 #!/usr/local/bin/python3
 """
-portctl - Consulta y cierra puertos abiertos rápidamente
+portctl - Fast and elegant TCP port management for macOS
 """
 
 __version__ = "0.1.0"
@@ -21,18 +21,18 @@ VALID_STATES = ('LISTEN', 'ESTABLISHED', 'CLOSE_WAIT')
 
 app = typer.Typer(
     help=(
-        "🔌 portctl — Consulta y cierra puertos abiertos en macOS.\n\n"
-        "Comandos disponibles:\n\n"
-        "  list          Lista todos los puertos abiertos (TCP).\n"
-        "                Usa -s/--state para filtrar por estado.\n\n"
-        "  kill <puerto> Termina el proceso que ocupa ese puerto.\n"
-        "                Pide confirmación antes de actuar.\n\n"
-        "  interactive   Menú interactivo: selecciona y cierra puertos\n"
-        "                con navegación por número de fila o puerto.\n\n"
-        "Estados disponibles para -s/--state:\n\n"
-        "  listen        Puertos esperando conexiones entrantes.\n"
-        "  established   Conexiones activas en este momento.\n"
-        "  close_wait    Conexiones cerrándose por el lado remoto."
+        "🔌 portctl — Inspect and manage open TCP ports on macOS.\n\n"
+        "Available commands:\n\n"
+        "  list          List all open ports (TCP).\n"
+        "                Use -s/--state to filter by state.\n\n"
+        "  kill <port>   Terminate the process occupying that port.\n"
+        "                Asks for confirmation before acting.\n\n"
+        "  interactive   Interactive menu: select and close ports\n"
+        "                with navigation by row number or port number.\n\n"
+        "Available states for -s/--state:\n\n"
+        "  listen        Ports waiting for incoming connections.\n"
+        "  established   Active connections right now.\n"
+        "  close_wait    Connections being closed by the remote side."
     ),
     add_completion=False,
     no_args_is_help=True,
@@ -88,14 +88,14 @@ def build_table(ports: List[dict], selected: Optional[set] = None) -> Table:
         show_lines=False,
         pad_edge=True,
     )
-    table.add_column("#",         style="bright_black", width=4,  justify="right")
-    table.add_column("Puerto",    style="bold yellow",  width=8,  justify="right")
-    table.add_column("Proto",     style="blue",         width=6)
-    table.add_column("Dirección", style="bright_black", width=16)
-    table.add_column("Estado",                          width=13)
-    table.add_column("PID",       style="magenta",      width=7,  justify="right")
-    table.add_column("Proceso",   style="white",        width=20)
-    table.add_column("Usuario",   style="bright_black", width=12)
+    table.add_column("#",        style="bright_black", width=4,  justify="right")
+    table.add_column("Port",     style="bold yellow",  width=8,  justify="right")
+    table.add_column("Proto",    style="blue",         width=6)
+    table.add_column("Address",  style="bright_black", width=16)
+    table.add_column("State",                          width=13)
+    table.add_column("PID",      style="magenta",      width=7,  justify="right")
+    table.add_column("Process",  style="white",        width=20)
+    table.add_column("User",     style="bright_black", width=12)
 
     for i, p in enumerate(ports, 1):
         color = status_color(p['status'])
@@ -129,15 +129,15 @@ def kill_port(port: int, force: bool = False) -> bool:
     return len(killed) > 0
 
 
-# ─── Comandos ───────────────────────────────────────────────────────────────
+# ─── Commands ───────────────────────────────────────────────────────────────
 
 @app.command(
     "list",
     help=(
-        "Lista los puertos abiertos del sistema.\n\n"
-        "Sin opciones muestra todos (LISTEN, ESTABLISHED, CLOSE_WAIT).\n"
-        "Usa -s/--state para filtrar por un estado concreto.\n\n"
-        "Ejemplos:\n\n"
+        "List open ports on the system.\n\n"
+        "Without options, shows all (LISTEN, ESTABLISHED, CLOSE_WAIT).\n"
+        "Use -s/--state to filter by a specific state.\n\n"
+        "Examples:\n\n"
         "  portctl list\n"
         "  portctl list -s listen\n"
         "  portctl list -s established\n"
@@ -147,25 +147,25 @@ def kill_port(port: int, force: bool = False) -> bool:
 def cmd_list(
     state: Optional[str] = typer.Option(
         None, "--state", "-s",
-        help="Filtra por estado: listen | established | close_wait",
-        metavar="ESTADO",
+        help="Filter by state: listen | established | close_wait",
+        metavar="STATE",
     ),
 ):
     if state and state.upper() not in VALID_STATES:
         console.print(
-            f"[red]✗[/]  Estado desconocido: [bold]{state}[/]\n"
-            f"    Valores válidos: [cyan]listen[/] · [cyan]established[/] · [cyan]close_wait[/]"
+            f"[red]✗[/]  Unknown state: [bold]{state}[/]\n"
+            f"    Valid values: [cyan]listen[/] · [cyan]established[/] · [cyan]close_wait[/]"
         )
         raise typer.Exit(1)
 
     ports = get_open_ports(filter_state=state)
 
     if not ports:
-        hint = f" con estado [bold]{state.upper()}[/]" if state else ""
-        console.print(Panel(f"[yellow]No se encontraron puertos abiertos[/]{hint}", border_style="yellow"))
+        hint = f" with state [bold]{state.upper()}[/]" if state else ""
+        console.print(Panel(f"[yellow]No open ports found[/]{hint}", border_style="yellow"))
         return
 
-    label = f"[bold white]🔌 portctl[/] [bright_black]—[/] [cyan]{len(ports)} puertos encontrados[/]"
+    label = f"[bold white]🔌 portctl[/] [bright_black]—[/] [cyan]{len(ports)} ports found[/]"
     if state:
         label += f"  [bright_black]({state.upper()})[/]"
 
@@ -178,24 +178,24 @@ def cmd_list(
 @app.command(
     "kill",
     help=(
-        "Cierra el proceso que ocupa un puerto.\n\n"
-        "Muestra el proceso afectado y pide confirmación antes de actuar.\n"
-        "Usa --force para enviar SIGKILL en vez de SIGTERM.\n"
-        "Usa --yes para omitir la confirmación (útil en scripts).\n\n"
-        "Ejemplos:\n\n"
+        "Close the process occupying a port.\n\n"
+        "Shows the affected process and asks for confirmation before acting.\n"
+        "Use --force to send SIGKILL instead of SIGTERM.\n"
+        "Use --yes to skip confirmation (useful in scripts).\n\n"
+        "Examples:\n\n"
         "  portctl kill 3000\n"
         "  portctl kill 8080 --force\n"
         "  portctl kill 5433 --yes"
     ),
 )
 def cmd_kill(
-    port:  int  = typer.Argument(..., help="Número de puerto a cerrar"),
-    force: bool = typer.Option(False, "--force", "-f", help="Usar SIGKILL en vez de SIGTERM"),
-    yes:   bool = typer.Option(False, "--yes",   "-y", help="No pedir confirmación"),
+    port:  int  = typer.Argument(..., help="Port number to close"),
+    force: bool = typer.Option(False, "--force", "-f", help="Use SIGKILL instead of SIGTERM"),
+    yes:   bool = typer.Option(False, "--yes",   "-y", help="Don't ask for confirmation"),
 ):
     ports = get_open_ports(filter_port=port)
     if not ports:
-        console.print(f"[yellow]⚠[/]  No hay ningún proceso en el puerto [bold]{port}[/]")
+        console.print(f"[yellow]⚠[/]  No process found on port [bold]{port}[/]")
         raise typer.Exit(1)
 
     console.print()
@@ -203,31 +203,31 @@ def cmd_kill(
     console.print()
 
     if not yes:
-        if not Confirm.ask(f"  [bold red]¿Cerrar proceso(s) en el puerto {port}?[/]", default=False):
-            console.print("[bright_black]  Cancelado.[/]")
+        if not Confirm.ask(f"  [bold red]Close process(es) on port {port}?[/]", default=False):
+            console.print("[bright_black]  Cancelled.[/]")
             return
 
     sig_label = "[red]SIGKILL[/]" if force else "[yellow]SIGTERM[/]"
-    console.print(f"  Enviando {sig_label} al puerto [bold]{port}[/]...", end=" ")
+    console.print(f"  Sending {sig_label} to port [bold]{port}[/]...", end=" ")
 
     if kill_port(port, force=force):
-        console.print("[bold green]✓ Cerrado[/]")
+        console.print("[bold green]✓ Closed[/]")
     else:
-        console.print("[bold red]✗ Error[/] [bright_black](¿permisos suficientes?)[/]")
+        console.print("[bold red]✗ Error[/] [bright_black](sufficient permissions?)[/]")
 
 
 @app.command(
     "interactive",
     help=(
-        "Menú interactivo para inspeccionar y cerrar puertos.\n\n"
-        "Muestra los puertos en LISTEN y permite seleccionarlos\n"
-        "por número de fila o por número de puerto directamente.\n"
-        "Se pueden seleccionar varios a la vez separándolos con comas.\n\n"
-        "Ejemplos de selección dentro del menú:\n\n"
-        "  3          → cierra la fila 3\n"
-        "  8080       → cierra el puerto 8080\n"
-        "  1,3,5      → cierra las filas 1, 3 y 5\n"
-        "  q          → salir"
+        "Interactive menu to inspect and close ports.\n\n"
+        "Shows ports in LISTEN state and allows selecting them\n"
+        "by row number or port number directly.\n"
+        "Multiple selections can be made by separating with commas.\n\n"
+        "Selection examples within the menu:\n\n"
+        "  3          → close row 3\n"
+        "  8080       → close port 8080\n"
+        "  1,3,5      → close rows 1, 3, and 5\n"
+        "  q          → quit"
     ),
 )
 def cmd_interactive():
@@ -235,58 +235,58 @@ def cmd_interactive():
         listen_ports = get_open_ports(filter_state='LISTEN')
 
         if not listen_ports:
-            console.print(Panel("[yellow]No hay puertos en estado LISTEN[/]", border_style="yellow"))
+            console.print(Panel("[yellow]No ports in LISTEN state[/]", border_style="yellow"))
             return
 
         console.clear()
         console.print()
         console.print(Panel(
-            "[bold white]🔌 portctl[/] [bright_black]—[/] [cyan]modo interactivo[/]",
+            "[bold white]🔌 portctl[/] [bright_black]—[/] [cyan]interactive mode[/]",
             border_style="bright_black",
             expand=False,
         ))
         console.print(build_table(listen_ports))
         console.print()
-        console.print("[bright_black]  Selecciona por fila o puerto · varios con comas · [white]q[/] para salir[/]")
+        console.print("[bright_black]  Select by row or port · multiple with commas · [white]q[/] to quit[/]")
         console.print()
 
         choice = Prompt.ask("  [bold cyan]>[/]").strip()
 
-        if choice.lower() in ('q', 'quit', 'exit', 'salir'):
-            console.print("[bright_black]  Hasta luego.[/]")
+        if choice.lower() in ('q', 'quit', 'exit'):
+            console.print("[bright_black]  Goodbye.[/]")
             break
 
         targets = []
         for part in choice.split(','):
             part = part.strip()
             if not part.isdigit():
-                console.print(f"[red]  Entrada inválida:[/] {part!r}")
+                console.print(f"[red]  Invalid input:[/] {part!r}")
                 continue
             num = int(part)
             if 1 <= num <= len(listen_ports):
                 targets.append(listen_ports[num - 1])
             else:
                 matches = [p for p in listen_ports if p['port'] == num]
-                targets.extend(matches) if matches else console.print(f"[red]  No encontrado:[/] {num}")
+                targets.extend(matches) if matches else console.print(f"[red]  Not found:[/] {num}")
 
         if not targets:
             continue
 
         console.print()
         for t in targets:
-            console.print(f"  → Puerto [bold yellow]{t['port']}[/]  PID [magenta]{t['pid']}[/]  [white]{t['name']}[/]")
+            console.print(f"  → Port [bold yellow]{t['port']}[/]  PID [magenta]{t['pid']}[/]  [white]{t['name']}[/]")
         console.print()
 
-        force = Confirm.ask("  ¿Usar SIGKILL (forzar cierre)?", default=False)
-        if Confirm.ask(f"  [bold red]¿Cerrar {len(targets)} proceso(s)?[/]", default=False):
+        force = Confirm.ask("  Use SIGKILL (force close)?", default=False)
+        if Confirm.ask(f"  [bold red]Close {len(targets)} process(es)?[/]", default=False):
             for t in targets:
                 icon = "[green]✓[/]" if kill_port(t['port'], force=force) else "[red]✗[/]"
-                console.print(f"  {icon} Puerto [bold]{t['port']}[/]")
+                console.print(f"  {icon} Port [bold]{t['port']}[/]")
         else:
-            console.print("[bright_black]  Cancelado.[/]")
+            console.print("[bright_black]  Cancelled.[/]")
 
         console.print()
-        Prompt.ask("  [bright_black]Pulsa Enter para continuar[/]", default="")
+        Prompt.ask("  [bright_black]Press Enter to continue[/]", default="")
 
 
 if __name__ == "__main__":
