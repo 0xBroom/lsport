@@ -48,7 +48,7 @@ def get_open_ports(filter_port: Optional[int] = None, filter_state: Optional[str
 
     for proc in psutil.process_iter(["pid", "name", "username"]):
         try:
-            conns = proc.net_connections(kind="inet")
+            conns = proc.net_connections(kind="tcp")
             for conn in conns:
                 if not conn.laddr or conn.status not in VALID_STATES:
                     continue
@@ -122,7 +122,7 @@ def kill_port(port: int, force: bool = False) -> bool:
     killed = []
     for proc in psutil.process_iter(["pid", "name"]):
         try:
-            for conn in proc.net_connections(kind="inet"):
+            for conn in proc.net_connections(kind="tcp"):
                 if conn.laddr and conn.laddr.port == port:
                     os.kill(proc.pid, signal.SIGKILL if force else signal.SIGTERM)
                     killed.append(proc.pid)
