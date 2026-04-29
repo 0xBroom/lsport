@@ -36,6 +36,7 @@ class TestGetOpenPorts:
         # Test
         ports = get_open_ports()
 
+        mock_proc.net_connections.assert_called_once_with(kind="tcp")
         assert len(ports) == 1
         assert ports[0]["port"] == 8080
         assert ports[0]["pid"] == 1234
