@@ -36,11 +36,12 @@ jobs:
         run: python -m ruff format --check portctl.py tests
 
   test:
-    name: Test (Python ${{ matrix.python-version }})
-    runs-on: macos-latest
+    name: Test (${{ matrix.os }} · Python ${{ matrix.python-version }})
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
+        os: [macos-latest, ubuntu-latest]
         python-version: ["3.9", "3.10", "3.11", "3.12"]
 
     steps:
