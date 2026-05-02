@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-portctl - Fast and elegant TCP port management for macOS
+portctl - Fast and elegant TCP port management for macOS and Linux
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 import os
 import signal
@@ -22,7 +22,7 @@ VALID_STATES = ("LISTEN", "ESTABLISHED", "CLOSE_WAIT")
 
 app = typer.Typer(
     help=(
-        "🔌 portctl — Inspect and manage open TCP ports on macOS.\n\n"
+        "🔌 portctl — Inspect and manage open TCP ports.\n\n"
         "Available commands:\n\n"
         "  list          List all open ports (TCP).\n"
         "                Use -s/--state to filter by state.\n\n"
