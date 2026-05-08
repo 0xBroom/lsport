@@ -72,7 +72,7 @@ def get_open_ports(filter_port: Optional[int] = None, filter_state: Optional[str
                         "addr": str(conn.laddr.ip),
                     }
                 )
-        except (psutil.NoSuchProcess, psutil.AccessDenied):
+        except (psutil.NoSuchProcess, psutil.AccessDenied, RuntimeError):
             continue
 
     ports.sort(key=lambda x: x["port"])
