@@ -17,7 +17,7 @@ Before creating bug reports, please check the existing issues to avoid duplicate
 - Provide specific examples to demonstrate the steps
 - Describe the behavior you observed and what you expected to see
 - Include screenshots if relevant
-- Include your environment details (macOS version, Python version)
+- Include your environment details (OS, Python version)
 
 ### Suggesting Enhancements
 
@@ -40,9 +40,10 @@ Enhancement suggestions are tracked as GitHub issues. When creating an enhanceme
 
 ### Prerequisites
 
-- macOS (portctl is macOS-only)
+- macOS or Linux
 - Python 3.9 or higher
-- pip
+- [`pipx`](https://pipx.pypa.io/) (for editable install)
+- `pip` (for installing dev dependencies into your editable venv)
 
 ### Setting up your development environment
 
@@ -53,18 +54,29 @@ Enhancement suggestions are tracked as GitHub issues. When creating an enhanceme
    cd portctl
    ```
 
-2. **Install dependencies:**
+2. **Install in editable mode via pipx:**
 
    ```bash
-   pip install -r requirements.txt
+   pipx install --editable .
    ```
 
-3. **Install the tool in development mode:**
+   This creates an isolated venv for `portctl`, exposes the `portctl`
+   command on your `PATH`, and tracks edits to `portctl.py` live — no
+   reinstall needed after each change.
 
-   You can symlink the script to test it locally:
+3. **Install dev dependencies into the pipx venv:**
 
    ```bash
-   ln -sf "$(pwd)/portctl.py" /usr/local/bin/portctl-dev
+   pipx inject portctl pytest pytest-cov ruff mypy
+   ```
+
+   Or, if you prefer working in a regular virtualenv for development:
+
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate
+   pip install -r requirements.txt
+   pip install -e .
    ```
 
 ### Running Tests
@@ -122,12 +134,11 @@ mypy portctl.py
 ```
 portctl/
 ├── portctl.py           # Main CLI application (single file)
-├── install.sh           # Installation script for macOS
 ├── tests/               # Test suite
 │   ├── test_portctl.py  # Unit tests
 │   └── test_cli.py      # CLI integration tests
-├── pyproject.toml       # Project configuration
-├── requirements.txt     # Dependencies
+├── pyproject.toml       # Package metadata and entry point
+├── requirements.txt     # Development dependencies
 ├── README.md            # User documentation
 └── CONTRIBUTING.md      # This file
 ```
@@ -195,9 +206,9 @@ import pdb; pdb.set_trace()
 
 ### Common Issues
 
-**"Command not found" after symlinking:**
-- Ensure `/usr/local/bin` is in your PATH
-- Check the symlink: `ls -la /usr/local/bin/portctl`
+**"Command not found" after `pipx install`:**
+- Run `pipx ensurepath` and restart your shell
+- Verify the install: `pipx list | grep portctl`
 
 **Tests failing:**
 - Make sure you have all dependencies: `pip install -r requirements.txt`

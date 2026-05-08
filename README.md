@@ -1,13 +1,13 @@
 # portctl
 
-A fast and elegant macOS command-line utility for inspecting and managing TCP ports.
+A fast and elegant command-line utility for inspecting and managing TCP ports on macOS and Linux.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 
 ## What is portctl?
 
-`portctl` helps you quickly identify which processes are occupying TCP ports on your Mac and terminate them when needed. It provides three modes of operation:
+`portctl` helps you quickly identify which processes are occupying TCP ports and terminate them when needed. It provides three modes of operation:
 
 - **List mode**: View all open TCP ports with process details
 - **Kill mode**: Terminate a process occupying a specific port
@@ -24,37 +24,58 @@ A fast and elegant macOS command-line utility for inspecting and managing TCP po
 
 ## Requirements
 
-- macOS (tested on recent versions)
+- macOS or Linux
 - Python 3.9 or higher
+- [`pipx`](https://pipx.pypa.io/) (one-time install)
 
 ## Installation
 
-### Quick install (recommended)
+`portctl` is distributed as a standard Python package and installed in an
+isolated environment via [`pipx`](https://pipx.pypa.io/). This avoids
+polluting your system Python, never touches `sudo`, and gives you a clean
+`pipx uninstall portctl` when you're done.
 
-Clone the repository and run the installer:
+### 1. Install pipx (one-time)
+
+**macOS:**
+
+```bash
+brew install pipx
+pipx ensurepath
+```
+
+**Linux (Debian/Ubuntu):**
+
+```bash
+sudo apt install pipx
+pipx ensurepath
+```
+
+For other distributions or platforms see the [pipx installation guide](https://pipx.pypa.io/stable/installation/).
+
+### 2. Install portctl
 
 ```bash
 git clone https://github.com/0xBroom/portctl.git
 cd portctl
-bash install.sh
+pipx install .
 ```
 
-The installer will:
-1. Verify Python 3 is installed (installs via Homebrew if missing)
-2. Install required dependencies (`psutil`, `typer`, `rich`)
-3. Symlink `portctl` to `/usr/local/bin`
+That's it. `portctl` is now available on your `PATH`, with its dependencies
+isolated in a dedicated virtual environment under `~/.local/share/pipx/`.
 
-### Manual installation
+### Updating
 
 ```bash
-# Install dependencies
-pip install psutil typer rich
+cd portctl
+git pull
+pipx install . --force
+```
 
-# Make script executable
-chmod +x portctl.py
+### Uninstalling
 
-# Symlink to your PATH
-sudo ln -sf "$(pwd)/portctl.py" /usr/local/bin/portctl
+```bash
+pipx uninstall portctl
 ```
 
 ## Usage
@@ -140,7 +161,7 @@ Launch an interactive TUI to browse and manage ports.
 ```
 portctl/
 ├── portctl.py      # Main CLI application
-├── install.sh      # macOS installer script
+├── pyproject.toml  # Package metadata and entry point
 ├── LICENSE         # MIT License
 └── README.md       # This file
 ```
@@ -166,4 +187,4 @@ Created by Esteban Encina
 ## Acknowledgments
 
 - Built with [Typer](https://typer.tiangolo.com/) and [Rich](https://rich.readthedocs.io/)
-- Inspired by the need for a fast, native macOS port management tool
+- Inspired by the need for a fast, native port management tool for the terminal
