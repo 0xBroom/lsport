@@ -72,7 +72,9 @@ def get_open_ports(filter_port: Optional[int] = None, filter_state: Optional[str
                         "addr": str(conn.laddr.ip),
                     }
                 )
-        except (psutil.NoSuchProcess, psutil.AccessDenied):
+        except (psutil.NoSuchProcess, psutil.AccessDenied, RuntimeError):
+            # RuntimeError: psutil's macOS C extension can leak raw errors from
+            # proc_pidinfo(PROC_PIDLISTFDS) that wrap_exceptions doesn't map.
             continue
 
     ports.sort(key=lambda x: x["port"])
@@ -127,7 +129,7 @@ def kill_port(port: int, force: bool = False) -> bool:
                     os.kill(proc.pid, signal.SIGKILL if force else signal.SIGTERM)
                     killed.append(proc.pid)
                     break
-        except (psutil.NoSuchProcess, psutil.AccessDenied, ProcessLookupError):
+        except (psutil.NoSuchProcess, psutil.AccessDenied, ProcessLookupError, RuntimeError):
             continue
     return len(killed) > 0
 

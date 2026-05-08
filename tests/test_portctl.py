@@ -116,6 +116,39 @@ class TestGetOpenPorts:
         assert len(ports) == 0
 
     @patch("portctl.psutil.process_iter")
+    def test_get_open_ports_handles_runtime_error(self, mock_process_iter):
+        """Regression: psutil's macOS C extension can leak RuntimeError from
+        proc_pidinfo(PROC_PIDLISTFDS); the iteration must not die. (Issue #9)"""
+        mock_proc = Mock()
+        mock_proc.net_connections.side_effect = RuntimeError("proc_pidinfo(PROC_PIDLISTFDS) 2/2 syscall failed")
+        mock_process_iter.return_value = [mock_proc]
+
+        ports = get_open_ports()
+        assert len(ports) == 0
+
+    @patch("portctl.psutil.process_iter")
+    def test_get_open_ports_continues_after_runtime_error(self, mock_process_iter):
+        """Regression: a bad PID raising RuntimeError must not prevent the
+        rest of the iteration from being scanned. (Issue #9)"""
+        bad_proc = Mock()
+        bad_proc.net_connections.side_effect = RuntimeError("proc_pidinfo(PROC_PIDLISTFDS) 2/2 syscall failed")
+
+        good_proc = Mock()
+        good_proc.pid = 4321
+        good_proc.info = {"name": "ok-app", "username": "testuser"}
+        good_conn = Mock()
+        good_conn.laddr = Mock(port=8080, ip="127.0.0.1")
+        good_conn.status = "LISTEN"
+        good_proc.net_connections.return_value = [good_conn]
+
+        mock_process_iter.return_value = [bad_proc, good_proc]
+
+        ports = get_open_ports()
+        assert len(ports) == 1
+        assert ports[0]["port"] == 8080
+        assert ports[0]["pid"] == 4321
+
+    @patch("portctl.psutil.process_iter")
     def test_get_open_ports_sorts_by_port(self, mock_process_iter):
         """Test that results are sorted by port number"""
         mock_proc = Mock()
@@ -206,6 +239,28 @@ class TestKillPort:
 
         assert result is True
         mock_os_kill.assert_called_with(1234, signal.SIGKILL)
+
+    @patch("portctl.os.kill")
+    @patch("portctl.psutil.process_iter")
+    def test_kill_port_skips_runtime_error_and_kills_target(self, mock_process_iter, mock_os_kill):
+        """Regression: a bad PID raising RuntimeError must not prevent the
+        target on a later PID from being killed. (Issue #9)"""
+        bad_proc = Mock()
+        bad_proc.net_connections.side_effect = RuntimeError("proc_pidinfo(PROC_PIDLISTFDS) 2/2 syscall failed")
+
+        target_proc = Mock()
+        target_proc.pid = 4321
+        target_conn = Mock()
+        target_conn.laddr = Mock(port=8080)
+        target_proc.net_connections.return_value = [target_conn]
+
+        mock_process_iter.return_value = [bad_proc, target_proc]
+
+        result = kill_port(8080)
+
+        assert result is True
+        mock_os_kill.assert_called_once()
+        assert mock_os_kill.call_args[0][0] == 4321
 
 
 class TestValidStates:
