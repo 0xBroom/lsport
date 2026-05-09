@@ -1,5 +1,5 @@
 """
-Integration tests for portctl CLI commands
+Integration tests for lsport CLI commands
 """
 
 import os
@@ -11,7 +11,7 @@ from unittest.mock import patch
 from typer.testing import CliRunner
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from portctl import app
+from lsport import app
 
 runner = CliRunner()
 
@@ -19,7 +19,7 @@ runner = CliRunner()
 class TestListCommand:
     """Test the list command"""
 
-    @patch("portctl.get_open_ports")
+    @patch("lsport.get_open_ports")
     def test_list_no_ports(self, mock_get_ports):
         """Test list command when no ports are open"""
         mock_get_ports.return_value = []
@@ -29,7 +29,7 @@ class TestListCommand:
         assert result.exit_code == 0
         assert "No open ports found" in result.stdout
 
-    @patch("portctl.get_open_ports")
+    @patch("lsport.get_open_ports")
     def test_list_with_ports(self, mock_get_ports):
         """Test list command with open ports"""
         mock_get_ports.return_value = [
@@ -51,7 +51,7 @@ class TestListCommand:
         assert "test-app" in result.stdout
         assert "LISTEN" in result.stdout
 
-    @patch("portctl.get_open_ports")
+    @patch("lsport.get_open_ports")
     def test_list_with_state_filter(self, mock_get_ports):
         """Test list command with state filter"""
         mock_get_ports.return_value = []
@@ -72,8 +72,8 @@ class TestListCommand:
 class TestKillCommand:
     """Test the kill command"""
 
-    @patch("portctl.kill_port")
-    @patch("portctl.get_open_ports")
+    @patch("lsport.kill_port")
+    @patch("lsport.get_open_ports")
     def test_kill_no_process_on_port(self, mock_get_ports, mock_kill_port):
         """Test kill command when no process is on the port"""
         mock_get_ports.return_value = []
@@ -83,8 +83,8 @@ class TestKillCommand:
         assert result.exit_code == 1
         assert "No process found" in result.stdout
 
-    @patch("portctl.kill_port")
-    @patch("portctl.get_open_ports")
+    @patch("lsport.kill_port")
+    @patch("lsport.get_open_ports")
     def test_kill_with_yes_flag(self, mock_get_ports, mock_kill_port):
         """Test kill command with --yes flag"""
         mock_get_ports.return_value = [
@@ -106,8 +106,8 @@ class TestKillCommand:
         mock_kill_port.assert_called_once_with(8080, force=False)
         assert "Closed" in result.stdout
 
-    @patch("portctl.kill_port")
-    @patch("portctl.get_open_ports")
+    @patch("lsport.kill_port")
+    @patch("lsport.get_open_ports")
     def test_kill_with_force_flag(self, mock_get_ports, mock_kill_port):
         """Test kill command with --force flag"""
         mock_get_ports.return_value = [
@@ -128,8 +128,8 @@ class TestKillCommand:
         assert result.exit_code == 0
         mock_kill_port.assert_called_once_with(8080, force=True)
 
-    @patch("portctl.kill_port")
-    @patch("portctl.get_open_ports")
+    @patch("lsport.kill_port")
+    @patch("lsport.get_open_ports")
     def test_kill_cancelled(self, mock_get_ports, mock_kill_port):
         """Test kill command when user cancels"""
         mock_get_ports.return_value = [
@@ -160,7 +160,7 @@ class TestAppHelp:
         result = runner.invoke(app, ["--help"])
 
         assert result.exit_code == 0
-        assert "portctl" in result.stdout
+        assert "lsport" in result.stdout
         assert "list" in result.stdout
         assert "kill" in result.stdout
         assert "interactive" in result.stdout

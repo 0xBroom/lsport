@@ -3,8 +3,8 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "portctl"
-version = "0.2.0"
+name = "lsport"
+version = "0.3.0"
 description = "A fast and elegant command-line utility for inspecting and managing TCP ports on macOS and Linux"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -38,15 +38,15 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/0xBroom/portctl"
-Repository = "https://github.com/0xBroom/portctl"
-Issues = "https://github.com/0xBroom/portctl/issues"
+Homepage = "https://github.com/0xBroom/lsport"
+Repository = "https://github.com/0xBroom/lsport"
+Issues = "https://github.com/0xBroom/lsport/issues"
 
 [project.scripts]
-portctl = "portctl:app"
+lsport = "lsport:app"
 
 [tool.setuptools]
-py-modules = ["portctl"]
+py-modules = ["lsport"]
 
 [tool.ruff]
 line-length = 120

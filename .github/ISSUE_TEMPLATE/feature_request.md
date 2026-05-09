@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest an idea for portctl
+about: Suggest an idea for lsport
 title: "[Feature]: "
 labels: ["enhancement"]
 assignees: []
@@ -26,7 +26,7 @@ Describe any alternative solutions or workarounds you've considered.
 
 ```bash
 # Example command usage
-portctl ...
+lsport ...
 ```
 
 ## Additional Context

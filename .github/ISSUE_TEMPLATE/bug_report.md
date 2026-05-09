@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Report a problem to help us improve portctl
+about: Report a problem to help us improve lsport
 title: "[Bug]: "
 labels: ["bug"]
 assignees: []
@@ -34,7 +34,7 @@ Paste full command output here
 
 - OS: macOS version (e.g., 14.5)
 - Python version: output of `python3 --version`
-- portctl version: output of `portctl --help` or commit/tag if running from source
+- lsport version: output of `lsport --help` or commit/tag if running from source
 - Installation method: install script / source / pip
 
 ## Additional Context

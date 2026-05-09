@@ -1,10 +1,10 @@
-# Tests for portctl
+# Tests for lsport
 
-This directory contains the test suite for portctl.
+This directory contains the test suite for lsport.
 
 ## Test Structure
 
-- `test_portctl.py` - Unit tests for core functions
+- `test_lsport.py` - Unit tests for core functions
 - `test_cli.py` - Integration tests for CLI commands
 
 ## Running Tests
@@ -14,13 +14,13 @@ This directory contains the test suite for portctl.
 pytest
 
 # Run with coverage
-pytest --cov=portctl
+pytest --cov=lsport
 
 # Run specific test file
-pytest tests/test_portctl.py
+pytest tests/test_lsport.py
 
 # Run specific test
-pytest tests/test_portctl.py::TestGetOpenPorts::test_get_open_ports_basic
+pytest tests/test_lsport.py::TestGetOpenPorts::test_get_open_ports_basic
 ```
 
 ## Test Coverage

@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-portctl - Fast and elegant TCP port management for macOS and Linux
+lsport - Fast and elegant TCP port management for macOS and Linux
 """
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 
 import os
 import signal
@@ -22,7 +22,7 @@ VALID_STATES = ("LISTEN", "ESTABLISHED", "CLOSE_WAIT")
 
 app = typer.Typer(
     help=(
-        "🔌 portctl — Inspect and manage open TCP ports.\n\n"
+        "🔌 lsport — Inspect and manage open TCP ports.\n\n"
         "Available commands:\n\n"
         "  list          List all open ports (TCP).\n"
         "                Use -s/--state to filter by state.\n\n"
@@ -144,10 +144,10 @@ def kill_port(port: int, force: bool = False) -> bool:
         "Without options, shows all (LISTEN, ESTABLISHED, CLOSE_WAIT).\n"
         "Use -s/--state to filter by a specific state.\n\n"
         "Examples:\n\n"
-        "  portctl list\n"
-        "  portctl list -s listen\n"
-        "  portctl list -s established\n"
-        "  portctl list -s close_wait"
+        "  lsport list\n"
+        "  lsport list -s listen\n"
+        "  lsport list -s established\n"
+        "  lsport list -s close_wait"
     ),
 )
 def cmd_list(
@@ -173,7 +173,7 @@ def cmd_list(
         console.print(Panel(f"[yellow]No open ports found[/]{hint}", border_style="yellow"))
         return
 
-    label = f"[bold white]🔌 portctl[/] [bright_black]—[/] [cyan]{len(ports)} ports found[/]"
+    label = f"[bold white]🔌 lsport[/] [bright_black]—[/] [cyan]{len(ports)} ports found[/]"
     if state:
         label += f"  [bright_black]({state.upper()})[/]"
 
@@ -191,9 +191,9 @@ def cmd_list(
         "Use --force to send SIGKILL instead of SIGTERM.\n"
         "Use --yes to skip confirmation (useful in scripts).\n\n"
         "Examples:\n\n"
-        "  portctl kill 3000\n"
-        "  portctl kill 8080 --force\n"
-        "  portctl kill 5433 --yes"
+        "  lsport kill 3000\n"
+        "  lsport kill 8080 --force\n"
+        "  lsport kill 5433 --yes"
     ),
 )
 def cmd_kill(
@@ -249,7 +249,7 @@ def cmd_interactive():
         console.print()
         console.print(
             Panel(
-                "[bold white]🔌 portctl[/] [bright_black]—[/] [cyan]interactive mode[/]",
+                "[bold white]🔌 lsport[/] [bright_black]—[/] [cyan]interactive mode[/]",
                 border_style="bright_black",
                 expand=False,
             )
