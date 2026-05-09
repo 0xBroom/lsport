@@ -3,7 +3,7 @@
 lsport - Fast and elegant TCP port management for macOS and Linux
 """
 
-__version__ = "0.3.0"
+__version__ = "0.3.1"
 
 import os
 import signal
