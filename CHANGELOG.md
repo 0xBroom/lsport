@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.2.0] - 2026-05-02
+## [0.2.0] - 2026-05-09
 
 ### Added
 
@@ -41,6 +41,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   user-writable target).
 - Closes #3 (unpinned `pip install` with `--break-system-packages` fallback).
 - Closes #4 (non-idempotent `~/.zshrc` mutation, missing `uninstall.sh`).
+- Closes #9 (`portctl list` crashed on macOS with an unhandled `RuntimeError`
+  from psutil's C extension when iterating processes the user could not
+  introspect; one bad PID killed the whole scan).
 
 ## [0.1.0] - 2026-04-27
 
