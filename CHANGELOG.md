@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.1] - 2026-05-09
+
+### Changed
+
+- **Docs-only release.** Exists solely to refresh the README rendered on
+  PyPI now that `lsport` is published there.
+  - Install instructions now use `pipx install lsport` directly instead of
+    cloning the repository.
+  - `pipx upgrade lsport` replaces the previous `git pull && pipx install . --force`
+    upgrade flow.
+  - Added an "Install from source" section pointing to `CONTRIBUTING.md`
+    for the editable / contributor flow.
+  - Refreshed the badge row with PyPI version, Python versions (auto-derived
+    from `requires-python`), and monthly downloads.
+- No runtime, packaging, or behavioral changes — `lsport.py` is identical
+  to `0.3.0` except for the `__version__` bump.
+
 ## [0.3.0] - 2026-05-09
 
 ### BREAKING
@@ -98,6 +115,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved type annotations and formatting consistency.
 - Added linting and formatting configuration via Ruff.
 
+[0.3.1]: https://github.com/0xBroom/lsport/releases/tag/v0.3.1
 [0.3.0]: https://github.com/0xBroom/lsport/releases/tag/v0.3.0
 [0.2.0]: https://github.com/0xBroom/lsport/releases/tag/v0.2.0
 [0.1.0]: https://github.com/0xBroom/lsport/releases/tag/v0.1.0
