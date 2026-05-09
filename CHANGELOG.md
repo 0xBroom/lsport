@@ -5,6 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-05-09
+
+### BREAKING
+
+- **Project renamed from `portctl` to `lsport`.** The `portctl` command no
+  longer exists. The new command is `lsport`. Existing installations must be
+  removed and reinstalled under the new name:
+
+  ```bash
+  pipx uninstall portctl
+  pipx install lsport
+  ```
+
+  No `portctl` shim is provided. The Python module is now `lsport` (replacing
+  `portctl`); any code importing `from portctl import ...` must be updated to
+  `from lsport import ...`.
+
+- Repository moved to <https://github.com/0xBroom/lsport>. GitHub redirects
+  preserve old clone URLs, but updating remotes to the new URL is recommended:
+
+  ```bash
+  git remote set-url origin git@github.com:0xBroom/lsport.git
+  ```
+
+### Added
+
+- First release published to PyPI as
+  [`lsport`](https://pypi.org/project/lsport/), via OIDC Trusted Publishing
+  from GitHub Actions.
+
 ## [0.2.0] - 2026-05-09
 
 ### Added
@@ -68,5 +98,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved type annotations and formatting consistency.
 - Added linting and formatting configuration via Ruff.
 
-[0.2.0]: https://github.com/0xBroom/portctl/releases/tag/v0.2.0
-[0.1.0]: https://github.com/0xBroom/portctl/releases/tag/v0.1.0
+[0.3.0]: https://github.com/0xBroom/lsport/releases/tag/v0.3.0
+[0.2.0]: https://github.com/0xBroom/lsport/releases/tag/v0.2.0
+[0.1.0]: https://github.com/0xBroom/lsport/releases/tag/v0.1.0

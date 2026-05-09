@@ -1,6 +1,6 @@
-# Contributing to portctl
+# Contributing to lsport
 
-First off, thank you for considering contributing to portctl! It's people like you that make portctl such a great tool.
+First off, thank you for considering contributing to lsport! It's people like you that make lsport such a great tool.
 
 ## Code of Conduct
 
@@ -50,8 +50,8 @@ Enhancement suggestions are tracked as GitHub issues. When creating an enhanceme
 1. **Clone your fork:**
 
    ```bash
-   git clone https://github.com/YOUR_USERNAME/portctl.git
-   cd portctl
+   git clone https://github.com/YOUR_USERNAME/lsport.git
+   cd lsport
    ```
 
 2. **Install in editable mode via pipx:**
@@ -60,14 +60,14 @@ Enhancement suggestions are tracked as GitHub issues. When creating an enhanceme
    pipx install --editable .
    ```
 
-   This creates an isolated venv for `portctl`, exposes the `portctl`
-   command on your `PATH`, and tracks edits to `portctl.py` live — no
+   This creates an isolated venv for `lsport`, exposes the `lsport`
+   command on your `PATH`, and tracks edits to `lsport.py` live — no
    reinstall needed after each change.
 
 3. **Install dev dependencies into the pipx venv:**
 
    ```bash
-   pipx inject portctl pytest pytest-cov ruff mypy
+   pipx inject lsport pytest pytest-cov ruff mypy
    ```
 
    Or, if you prefer working in a regular virtualenv for development:
@@ -88,13 +88,13 @@ We use pytest for testing. Make sure all tests pass before submitting a PR:
 pytest
 
 # Run with coverage
-pytest --cov=portctl
+pytest --cov=lsport
 
 # Run specific test file
-pytest tests/test_portctl.py
+pytest tests/test_lsport.py
 
 # Run a specific test
-pytest tests/test_portctl.py::TestGetOpenPorts::test_get_open_ports_basic
+pytest tests/test_lsport.py::TestGetOpenPorts::test_get_open_ports_basic
 ```
 
 ### Code Style
@@ -103,13 +103,13 @@ We use [ruff](https://github.com/astral-sh/ruff) for linting and formatting:
 
 ```bash
 # Check for linting issues
-python3 -m ruff check portctl.py
+python3 -m ruff check lsport.py
 
 # Auto-fix issues
-python3 -m ruff check --fix portctl.py
+python3 -m ruff check --fix lsport.py
 
 # Format code
-python3 -m ruff format portctl.py
+python3 -m ruff format lsport.py
 ```
 
 **Key style guidelines:**
@@ -126,16 +126,16 @@ python3 -m ruff format portctl.py
 We use mypy for optional type checking:
 
 ```bash
-mypy portctl.py
+mypy lsport.py
 ```
 
 ## Project Structure
 
 ```
-portctl/
-├── portctl.py           # Main CLI application (single file)
+lsport/
+├── lsport.py           # Main CLI application (single file)
 ├── tests/               # Test suite
-│   ├── test_portctl.py  # Unit tests
+│   ├── test_lsport.py  # Unit tests
 │   └── test_cli.py      # CLI integration tests
 ├── pyproject.toml       # Package metadata and entry point
 ├── requirements.txt     # Development dependencies
@@ -183,17 +183,17 @@ test: Add tests for port filtering functionality
 
 ## Development Tips
 
-### Testing portctl locally
+### Testing lsport locally
 
 ```bash
 # Test list command
-./portctl.py list
+./lsport.py list
 
 # Test with state filter
-./portctl.py list -s listen
+./lsport.py list -s listen
 
 # Test kill command (be careful!)
-./portctl.py kill 8080 --yes
+./lsport.py kill 8080 --yes
 ```
 
 ### Debugging
@@ -208,7 +208,7 @@ import pdb; pdb.set_trace()
 
 **"Command not found" after `pipx install`:**
 - Run `pipx ensurepath` and restart your shell
-- Verify the install: `pipx list | grep portctl`
+- Verify the install: `pipx list | grep lsport`
 
 **Tests failing:**
 - Make sure you have all dependencies: `pip install -r requirements.txt`
@@ -224,4 +224,4 @@ Feel free to open an issue with the "question" label, or reach out to the mainta
 
 ## Recognition
 
-Contributors will be recognized in the project README. Thank you for making portctl better!
+Contributors will be recognized in the project README. Thank you for making lsport better!

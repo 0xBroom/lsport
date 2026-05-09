@@ -30,10 +30,10 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run ruff check
-        run: python -m ruff check portctl.py tests
+        run: python -m ruff check lsport.py tests
 
       - name: Run ruff format check
-        run: python -m ruff format --check portctl.py tests
+        run: python -m ruff format --check lsport.py tests
 
   test:
     name: Test (${{ matrix.os }} · Python ${{ matrix.python-version }})

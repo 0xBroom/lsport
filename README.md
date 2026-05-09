@@ -1,13 +1,13 @@
-# portctl
+# lsport
 
 A fast and elegant command-line utility for inspecting and managing TCP ports on macOS and Linux.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 
-## What is portctl?
+## What is lsport?
 
-`portctl` helps you quickly identify which processes are occupying TCP ports and terminate them when needed. It provides three modes of operation:
+`lsport` helps you quickly identify which processes are occupying TCP ports and terminate them when needed. It provides three modes of operation:
 
 - **List mode**: View all open TCP ports with process details
 - **Kill mode**: Terminate a process occupying a specific port
@@ -30,10 +30,10 @@ A fast and elegant command-line utility for inspecting and managing TCP ports on
 
 ## Installation
 
-`portctl` is distributed as a standard Python package and installed in an
+`lsport` is distributed as a standard Python package and installed in an
 isolated environment via [`pipx`](https://pipx.pypa.io/). This avoids
 polluting your system Python, never touches `sudo`, and gives you a clean
-`pipx uninstall portctl` when you're done.
+`pipx uninstall lsport` when you're done.
 
 ### 1. Install pipx (one-time)
 
@@ -53,21 +53,21 @@ pipx ensurepath
 
 For other distributions or platforms see the [pipx installation guide](https://pipx.pypa.io/stable/installation/).
 
-### 2. Install portctl
+### 2. Install lsport
 
 ```bash
-git clone https://github.com/0xBroom/portctl.git
-cd portctl
+git clone https://github.com/0xBroom/lsport.git
+cd lsport
 pipx install .
 ```
 
-That's it. `portctl` is now available on your `PATH`, with its dependencies
+That's it. `lsport` is now available on your `PATH`, with its dependencies
 isolated in a dedicated virtual environment under `~/.local/share/pipx/`.
 
 ### Updating
 
 ```bash
-cd portctl
+cd lsport
 git pull
 pipx install . --force
 ```
@@ -75,7 +75,7 @@ pipx install . --force
 ### Uninstalling
 
 ```bash
-pipx uninstall portctl
+pipx uninstall lsport
 ```
 
 ## Usage
@@ -83,7 +83,7 @@ pipx uninstall portctl
 ### List all open ports
 
 ```bash
-portctl list
+lsport list
 ```
 
 Output example:
@@ -100,32 +100,32 @@ Output example:
 
 ```bash
 # Show only listening ports
-portctl list --state listen
+lsport list --state listen
 
 # Show active connections
-portctl list --state established
+lsport list --state established
 
 # Show ports in close_wait state
-portctl list --state close_wait
+lsport list --state close_wait
 ```
 
 ### Kill a process on a specific port
 
 ```bash
 # Interactive kill (asks for confirmation)
-portctl kill 3000
+lsport kill 3000
 
 # Skip confirmation
-portctl kill 3000 --yes
+lsport kill 3000 --yes
 
 # Force kill (SIGKILL instead of SIGTERM)
-portctl kill 3000 --force
+lsport kill 3000 --force
 ```
 
 ### Interactive mode
 
 ```bash
-portctl interactive
+lsport interactive
 ```
 
 Navigate the interactive TUI to:
@@ -135,14 +135,14 @@ Navigate the interactive TUI to:
 
 ## Command Reference
 
-### `portctl list`
+### `lsport list`
 
 Lists all open TCP ports.
 
 **Options:**
 - `-s, --state [listen|established|close_wait]` - Filter by connection state
 
-### `portctl kill <port>`
+### `lsport kill <port>`
 
 Terminates the process occupying the specified port.
 
@@ -150,7 +150,7 @@ Terminates the process occupying the specified port.
 - `-f, --force` - Use SIGKILL instead of SIGTERM
 - `-y, --yes` - Skip confirmation prompt
 
-### `portctl interactive`
+### `lsport interactive`
 
 Launch an interactive TUI to browse and manage ports.
 
@@ -159,8 +159,8 @@ Launch an interactive TUI to browse and manage ports.
 ### Project structure
 
 ```
-portctl/
-├── portctl.py      # Main CLI application
+lsport/
+├── lsport.py      # Main CLI application
 ├── pyproject.toml  # Package metadata and entry point
 ├── LICENSE         # MIT License
 └── README.md       # This file

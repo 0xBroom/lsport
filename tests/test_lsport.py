@@ -1,23 +1,23 @@
 """
-Unit tests for portctl core functionality
+Unit tests for lsport core functionality
 """
 
 import os
 
-# Import functions from portctl
+# Import functions from lsport
 import sys
 from unittest.mock import Mock, patch
 
 import psutil
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from portctl import VALID_STATES, get_open_ports, kill_port, status_color
+from lsport import VALID_STATES, get_open_ports, kill_port, status_color
 
 
 class TestGetOpenPorts:
     """Test the get_open_ports function"""
 
-    @patch("portctl.psutil.process_iter")
+    @patch("lsport.psutil.process_iter")
     def test_get_open_ports_basic(self, mock_process_iter):
         """Test basic port listing"""
         # Create mock process
@@ -45,7 +45,7 @@ class TestGetOpenPorts:
         assert ports[0]["status"] == "LISTEN"
         assert ports[0]["proto"] == "TCP"
 
-    @patch("portctl.psutil.process_iter")
+    @patch("lsport.psutil.process_iter")
     def test_get_open_ports_filter_by_port(self, mock_process_iter):
         """Test filtering by specific port"""
         mock_proc = Mock()
@@ -69,7 +69,7 @@ class TestGetOpenPorts:
         assert len(ports) == 1
         assert ports[0]["port"] == 8080
 
-    @patch("portctl.psutil.process_iter")
+    @patch("lsport.psutil.process_iter")
     def test_get_open_ports_filter_by_state(self, mock_process_iter):
         """Test filtering by connection state"""
         mock_proc = Mock()
@@ -93,7 +93,7 @@ class TestGetOpenPorts:
         assert len(ports) == 1
         assert ports[0]["status"] == "LISTEN"
 
-    @patch("portctl.psutil.process_iter")
+    @patch("lsport.psutil.process_iter")
     def test_get_open_ports_handles_no_such_process(self, mock_process_iter):
         """Test that NoSuchProcess exceptions are handled gracefully"""
         mock_proc = Mock()
@@ -104,7 +104,7 @@ class TestGetOpenPorts:
         ports = get_open_ports()
         assert len(ports) == 0
 
-    @patch("portctl.psutil.process_iter")
+    @patch("lsport.psutil.process_iter")
     def test_get_open_ports_handles_access_denied(self, mock_process_iter):
         """Test that AccessDenied exceptions are handled gracefully"""
         mock_proc = Mock()
@@ -115,7 +115,7 @@ class TestGetOpenPorts:
         ports = get_open_ports()
         assert len(ports) == 0
 
-    @patch("portctl.psutil.process_iter")
+    @patch("lsport.psutil.process_iter")
     def test_get_open_ports_handles_runtime_error(self, mock_process_iter):
         """Regression: psutil's macOS C extension can leak RuntimeError from
         proc_pidinfo(PROC_PIDLISTFDS); the iteration must not die. (Issue #9)"""
@@ -126,7 +126,7 @@ class TestGetOpenPorts:
         ports = get_open_ports()
         assert len(ports) == 0
 
-    @patch("portctl.psutil.process_iter")
+    @patch("lsport.psutil.process_iter")
     def test_get_open_ports_continues_after_runtime_error(self, mock_process_iter):
         """Regression: a bad PID raising RuntimeError must not prevent the
         rest of the iteration from being scanned. (Issue #9)"""
@@ -148,7 +148,7 @@ class TestGetOpenPorts:
         assert ports[0]["port"] == 8080
         assert ports[0]["pid"] == 4321
 
-    @patch("portctl.psutil.process_iter")
+    @patch("lsport.psutil.process_iter")
     def test_get_open_ports_sorts_by_port(self, mock_process_iter):
         """Test that results are sorted by port number"""
         mock_proc = Mock()
@@ -193,8 +193,8 @@ class TestStatusColor:
 class TestKillPort:
     """Test the kill_port function"""
 
-    @patch("portctl.os.kill")
-    @patch("portctl.psutil.process_iter")
+    @patch("lsport.os.kill")
+    @patch("lsport.psutil.process_iter")
     def test_kill_port_success(self, mock_process_iter, mock_os_kill):
         """Test successfully killing a process on a port"""
         mock_proc = Mock()
@@ -211,7 +211,7 @@ class TestKillPort:
         assert result is True
         mock_os_kill.assert_called_once()
 
-    @patch("portctl.psutil.process_iter")
+    @patch("lsport.psutil.process_iter")
     def test_kill_port_not_found(self, mock_process_iter):
         """Test killing a port that doesn't exist"""
         mock_process_iter.return_value = []
@@ -220,8 +220,8 @@ class TestKillPort:
 
         assert result is False
 
-    @patch("portctl.os.kill")
-    @patch("portctl.psutil.process_iter")
+    @patch("lsport.os.kill")
+    @patch("lsport.psutil.process_iter")
     def test_kill_port_with_force(self, mock_process_iter, mock_os_kill):
         """Test force killing with SIGKILL"""
         import signal
@@ -240,8 +240,8 @@ class TestKillPort:
         assert result is True
         mock_os_kill.assert_called_with(1234, signal.SIGKILL)
 
-    @patch("portctl.os.kill")
-    @patch("portctl.psutil.process_iter")
+    @patch("lsport.os.kill")
+    @patch("lsport.psutil.process_iter")
     def test_kill_port_skips_runtime_error_and_kills_target(self, mock_process_iter, mock_os_kill):
         """Regression: a bad PID raising RuntimeError must not prevent the
         target on a later PID from being killed. (Issue #9)"""

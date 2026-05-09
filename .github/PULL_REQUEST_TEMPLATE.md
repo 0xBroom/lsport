@@ -17,7 +17,7 @@ Describe how reviewers can validate this change.
 ```bash
 # Example
 python3 -m pytest tests/ -v
-python3 -m ruff check portctl.py
+python3 -m ruff check lsport.py
 ```
 
 ## Screenshots / Terminal Output (if relevant)
