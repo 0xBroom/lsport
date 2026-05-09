@@ -2,8 +2,10 @@
 
 A fast and elegant command-line utility for inspecting and managing TCP ports on macOS and Linux.
 
+[![PyPI version](https://img.shields.io/pypi/v/lsport.svg)](https://pypi.org/project/lsport/)
+[![Python versions](https://img.shields.io/pypi/pyversions/lsport.svg)](https://pypi.org/project/lsport/)
+[![Downloads](https://img.shields.io/pypi/dm/lsport.svg)](https://pypi.org/project/lsport/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 
 ## What is lsport?
 
@@ -30,8 +32,8 @@ A fast and elegant command-line utility for inspecting and managing TCP ports on
 
 ## Installation
 
-`lsport` is distributed as a standard Python package and installed in an
-isolated environment via [`pipx`](https://pipx.pypa.io/). This avoids
+`lsport` is published on [PyPI](https://pypi.org/project/lsport/) and installed
+in an isolated environment via [`pipx`](https://pipx.pypa.io/). This avoids
 polluting your system Python, never touches `sudo`, and gives you a clean
 `pipx uninstall lsport` when you're done.
 
@@ -56,9 +58,7 @@ For other distributions or platforms see the [pipx installation guide](https://p
 ### 2. Install lsport
 
 ```bash
-git clone https://github.com/0xBroom/lsport.git
-cd lsport
-pipx install .
+pipx install lsport
 ```
 
 That's it. `lsport` is now available on your `PATH`, with its dependencies
@@ -67,15 +67,24 @@ isolated in a dedicated virtual environment under `~/.local/share/pipx/`.
 ### Updating
 
 ```bash
-cd lsport
-git pull
-pipx install . --force
+pipx upgrade lsport
 ```
 
 ### Uninstalling
 
 ```bash
 pipx uninstall lsport
+```
+
+### Install from source
+
+If you want to run a development build from a local clone (useful for
+contributing — see [`CONTRIBUTING.md`](CONTRIBUTING.md)):
+
+```bash
+git clone https://github.com/0xBroom/lsport.git
+cd lsport
+pipx install --editable .
 ```
 
 ## Usage
